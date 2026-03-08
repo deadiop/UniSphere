@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>UniSphere</title>
+
 <link rel="stylesheet" href="css/styles.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Firebase SDKs (compat) -->
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 
@@ -17,102 +18,112 @@
 
 <!-- LOGIN PAGE -->
 <div id="loginPage" class="auth-container">
-<h2>UniSphere Login</h2>
-<input type="email" id="loginEmail" placeholder="Email">
-<input type="password" id="loginPassword" placeholder="Password">
-<label class="policy">
-<input type="checkbox" id="policyCheck"> I agree to Privacy Policy
-</label>
-<button id="loginButton" disabled onclick="login()">Login</button>
-<p onclick="showSignup()">Don't have an account? Sign Up</p>
-<p id="loginMessage"></p>
+  <h2>UniSphere Login</h2>
+  <input type="email" id="loginEmail" placeholder="Email">
+  <input type="password" id="loginPassword" placeholder="Password">
+  <label class="policy">
+    <input type="checkbox" id="policyCheck"> I agree to Privacy Policy
+  </label>
+  <button id="loginButton" disabled onclick="login()">Login</button>
+  <p onclick="showSignup()">Don't have an account? Sign Up</p>
+  <p id="loginMessage"></p>
 </div>
 
 <!-- SIGNUP PAGE -->
 <div id="signupPage" class="auth-container hidden">
-<h2>Create Account</h2>
-<input type="email" id="signupEmail" placeholder="Email">
-<input type="password" id="signupPassword" placeholder="Password">
-<button onclick="signup()">Sign Up</button>
-<p onclick="showLogin()">Already have an account? Login</p>
-<p id="signupMessage"></p>
+  <h2>Create Account</h2>
+  <input type="email" id="signupEmail" placeholder="Email">
+  <input type="password" id="signupPassword" placeholder="Password">
+  <button onclick="signup()">Sign Up</button>
+  <p onclick="showLogin()">Already have an account? Login</p>
+  <p id="signupMessage"></p>
 </div>
 
-<!-- MAIN DASHBOARD -->
+<!-- DASHBOARD -->
 <div id="dashboard" class="hidden">
-<header>
-<h2>UniSphere</h2>
-<button class="notify-btn" onclick="toggleNotifications()">🔔</button>
-</header>
+  <header>
+    <h2>UniSphere</h2>
+    <button class="notify-btn" onclick="toggleNotifications()">🔔</button>
+  </header>
 
-<div class="layout">
-<aside class="sidebar">
-<h3>Dashboard</h3>
-<ul>
-<li onclick="showPage('home')">🏠 Home</li>
-<li onclick="showPage('events')">🎫 Events</li>
-<li onclick="showPage('faculty')">👨‍🏫 Faculty</li>
-<li onclick="showPage('documents')">📄 Documents</li>
-<li onclick="showPage('map')">🗺 Campus Map</li>
-<li onclick="showPage('account')">👤 Account</li>
-</ul>
-</aside>
+  <div class="layout">
+    <aside class="sidebar">
+      <h3>Dashboard</h3>
+      <ul>
+        <li onclick="showPage('home')">🏠 Home</li>
+        <li onclick="showPage('events')">🎫 Events</li>
+        <li onclick="showPage('faculty')">👨‍🏫 Faculty</li>
+        <li onclick="showPage('documents')">📄 Documents</li>
+        <li onclick="showPage('map')">🗺 Campus Map</li>
+        <li onclick="showPage('account')">👤 Account</li>
+      </ul>
+    </aside>
 
-<div class="content">
-<!-- HOME -->
-<section id="home" class="page active">
-<h1>Welcome to UniSphere</h1>
-<p>Your university digital hub.</p>
-<div class="card-grid">
-<div class="card"><h3>Upcoming Events</h3><p>3 events this month</p></div>
-<div class="card"><h3>Documents</h3><p>Access study materials</p></div>
-<div class="card"><h3>Campus Map</h3><p>Navigate easily</p></div>
+    <div class="content">
+      <!-- HOME -->
+      <section id="home" class="page active">
+        <h1>Welcome to UniSphere</h1>
+        <p>Your university digital hub.</p>
+        <div class="card-grid">
+          <div class="card">
+            <h3>Upcoming Events</h3>
+            <p>3 events this month</p>
+          </div>
+          <div class="card">
+            <h3>Documents</h3>
+            <p>Access study materials</p>
+          </div>
+          <div class="card">
+            <h3>Campus Map</h3>
+            <p>Navigate easily</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- EVENTS -->
+      <section id="events" class="page">
+        <h1>Upcoming Events</h1>
+        <div class="event-grid" id="eventsContainer">
+          <!-- Events loaded dynamically -->
+        </div>
+      </section>
+
+      <!-- FACULTY -->
+      <section id="faculty" class="page">
+        <h1>Faculty</h1>
+        <table>
+          <tr><th>Name</th><th>Department</th></tr>
+          <tr><td>Dr. Sharma</td><td>Computer Science</td></tr>
+        </table>
+      </section>
+
+      <!-- DOCUMENTS -->
+      <section id="documents" class="page">
+        <h1>Documents</h1>
+        <button onclick="window.open('https://learning.tcsionhub.in')">Open TCS iON Portal</button>
+      </section>
+
+      <!-- MAP -->
+      <section id="map" class="page">
+        <h1>Campus Map</h1>
+        <iframe
+          src="https://maps.google.com/maps?q=MIT%20ADT%20University&t=&z=15&ie=UTF8&iwloc=&output=embed"
+          width="100%" height="300">
+        </iframe>
+      </section>
+
+      <!-- ACCOUNT -->
+      <section id="account" class="page">
+        <h1>Account</h1>
+        <p id="welcomeUser"></p>
+        <h3>Registered Events</h3>
+        <ul id="registeredEvents"></ul>
+        <button onclick="logout()">Sign Out</button>
+      </section>
+    </div>
+  </div>
 </div>
-</section>
 
-<!-- EVENTS -->
-<section id="events" class="page">
-<h1>Upcoming Events</h1>
-<div class="event-grid" id="eventsContainer">
-<!-- Events dynamically loaded -->
-</div>
-</section>
-
-<!-- FACULTY -->
-<section id="faculty" class="page">
-<h1>Faculty</h1>
-<table>
-<tr><th>Name</th><th>Department</th></tr>
-<tr><td>Dr. Sharma</td><td>Computer Science</td></tr>
-</table>
-</section>
-
-<!-- DOCUMENTS -->
-<section id="documents" class="page">
-<h1>Documents</h1>
-<button onclick="window.open('https://learning.tcsionhub.in')">Open TCS iON Portal</button>
-</section>
-
-<!-- MAP -->
-<section id="map" class="page">
-<h1>Campus Map</h1>
-<iframe src="https://maps.google.com/maps?q=MIT%20ADT%20University&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="300"></iframe>
-</section>
-
-<!-- ACCOUNT -->
-<section id="account" class="page">
-<h1>Account</h1>
-<p id="welcomeUser"></p>
-<h3>Registered Events</h3>
-<ul id="registeredEvents"></ul>
-<button onclick="logout()">Sign Out</button>
-</section>
-
-</div>
-</div>
-</div>
-
-<!-- External JS -->
 <script src="script.js"></script>
 </body>
 </html>
