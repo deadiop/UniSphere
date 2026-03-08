@@ -31,12 +31,13 @@ function showLogin() {
 FIREBASE CONFIGURATION
 ========================= */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyAkv_DvIsebBqaV4HcIzuSqJxhfjySATYg",
   authDomain: "unisphere-25.firebaseapp.com",
   projectId: "unisphere-25",
-  storageBucket: "unisphere-25.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  storageBucket: "unisphere-25.firebasestorage.app",
+  messagingSenderId: "673455787578",
+  appId: "1:673455787578:web:7d77141819dbe4ac85ef03",
+  measurementId: "G-JHR3XK4D8Q"
 };
 
 // Initialize Firebase
