@@ -1,217 +1,188 @@
-alert("JS is running");
 /* =========================
 POLICY CHECKBOX LOGIN ENABLE
 ========================= */
+window.onload = function() {
+  const policyCheck = document.getElementById("policyCheck");
+  const loginButton = document.getElementById("loginButton");
 
-window.onload = function(){
+  if (policyCheck && loginButton) {
+    loginButton.disabled = true;
 
-const policyCheck = document.getElementById("policyCheck");
-const loginButton = document.getElementById("loginButton");
-
-if(policyCheck && loginButton){
-
-loginButton.disabled = true;
-
-policyCheck.addEventListener("change", function(){
-loginButton.disabled = !this.checked;
-});
-
-}
-
-}
+    policyCheck.addEventListener("change", function() {
+      loginButton.disabled = !this.checked;
+    });
+  }
+};
 
 /* =========================
 PAGE SWITCHING
 ========================= */
-
-function showSignup(){
-
-document.getElementById("loginPage").classList.add("hidden");
-document.getElementById("signupPage").classList.remove("hidden");
-
+function showSignup() {
+  document.getElementById("loginPage").classList.add("hidden");
+  document.getElementById("signupPage").classList.remove("hidden");
 }
 
-function showLogin(){
-
-document.getElementById("signupPage").classList.add("hidden");
-document.getElementById("loginPage").classList.remove("hidden");
-
+function showLogin() {
+  document.getElementById("signupPage").classList.add("hidden");
+  document.getElementById("loginPage").classList.remove("hidden");
 }
+
+/* =========================
+FIREBASE CONFIGURATION
+========================= */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "unisphere-25.firebaseapp.com",
+  projectId: "unisphere-25",
+  storageBucket: "unisphere-25.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
 /* =========================
 SIGNUP SYSTEM
 ========================= */
+function signup() {
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value.trim();
 
-function signup(){
+  if (!email || !password) {
+    document.getElementById("signupMessage").innerText = "Please fill all fields";
+    return;
+  }
 
-const username = document.getElementById("newUsername").value.trim();
-const email = document.getElementById("newEmail").value.trim();
-const password = document.getElementById("newPassword").value.trim();
-
-if(!username || !email || !password){
-alert("Please fill all fields");
-return;
-}
-
-let users = JSON.parse(localStorage.getItem("users")) || [];
-
-const userExists = users.find(user => user.username === username);
-
-if(userExists){
-alert("Username already exists");
-return;
-}
-
-const newUser = {
-username: username,
-email: email,
-password: password
-};
-
-users.push(newUser);
-
-localStorage.setItem("users", JSON.stringify(users));
-
-alert("Account created successfully!");
-
-showLogin();
-
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      document.getElementById("signupMessage").innerText = "Account created! Please log in.";
+      showLogin();
+    })
+    .catch(error => {
+      document.getElementById("signupMessage").innerText = error.message;
+    });
 }
 
 /* =========================
 LOGIN SYSTEM
 ========================= */
+function login() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
 
-function login(){
-
-const username = document.getElementById("username").value.trim();
-const password = document.getElementById("password").value.trim();
-
-const users = JSON.parse(localStorage.getItem("users")) || [];
-
-const validUser = users.find(user =>
-user.username === username && user.password === password
-);
-
-if(validUser){
-
-localStorage.setItem("currentUser", username);
-
-document.getElementById("loginPage").classList.add("hidden");
-document.getElementById("dashboard").classList.remove("hidden");
-
-document.getElementById("welcomeUser").innerText = "Welcome, " + validUser.username;
-
-loadAdminEvents();
-loadRegisteredEvents();
-
-}else{
-
-alert("Invalid login");
-
+  auth.signInWithEmailAndPassword(email, password)
+    .then(userCredential => {
+      document.getElementById("loginMessage").innerText = "";
+      showDashboard(userCredential.user);
+    })
+    .catch(error => {
+      document.getElementById("loginMessage").innerText = error.message;
+    });
 }
 
+/* =========================
+SHOW DASHBOARD AFTER LOGIN
+========================= */
+function showDashboard(user) {
+  document.getElementById("loginPage").classList.add("hidden");
+  document.getElementById("signupPage").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  document.getElementById("welcomeUser").innerText = `Welcome, ${user.email}`;
+
+  loadRegisteredEvents();
+  loadAdminEvents();
 }
 
 /* =========================
 LOGOUT
 ========================= */
-
-function logout(){
-
-localStorage.removeItem("currentUser");
-
-location.reload();
-
+function logout() {
+  auth.signOut().then(() => {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginPage").classList.remove("hidden");
+  });
 }
+
+/* =========================
+KEEP USER LOGGED IN
+========================= */
+auth.onAuthStateChanged(user => {
+  if (user) {
+    showDashboard(user);
+  }
+});
 
 /* =========================
 PAGE NAVIGATION
 ========================= */
-
-function showPage(page){
-
-document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-
-document.getElementById(page).classList.add("active");
-
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
 }
 
 /* =========================
 EVENT REGISTRATION
 ========================= */
+function registerEvent(eventName, button) {
+  let registeredEvents = JSON.parse(localStorage.getItem("registeredEvents")) || [];
 
-function registerEvent(eventName, button){
+  if (!registeredEvents.includes(eventName)) {
+    registeredEvents.push(eventName);
+    localStorage.setItem("registeredEvents", JSON.stringify(registeredEvents));
+    button.innerText = "Registered";
+    button.disabled = true;
+  }
 
-let registeredEvents = JSON.parse(localStorage.getItem("registeredEvents")) || [];
-
-if(!registeredEvents.includes(eventName)){
-
-registeredEvents.push(eventName);
-
-localStorage.setItem("registeredEvents", JSON.stringify(registeredEvents));
-
-button.innerText = "Registered";
-button.disabled = true;
-
-}
-
-loadRegisteredEvents();
-
+  loadRegisteredEvents();
 }
 
 /* =========================
 LOAD USER REGISTERED EVENTS
 ========================= */
+function loadRegisteredEvents() {
+  const list = document.getElementById("registeredEvents");
+  if (!list) return;
 
-function loadRegisteredEvents(){
+  list.innerHTML = "";
 
-const list = document.getElementById("registeredEvents");
-
-if(!list) return;
-
-list.innerHTML = "";
-
-const events = JSON.parse(localStorage.getItem("registeredEvents")) || [];
-
-events.forEach(event => {
-
-const li = document.createElement("li");
-li.innerText = event;
-
-list.appendChild(li);
-
-});
-
+  const events = JSON.parse(localStorage.getItem("registeredEvents")) || [];
+  events.forEach(event => {
+    const li = document.createElement("li");
+    li.innerText = event;
+    list.appendChild(li);
+  });
 }
 
 /* =========================
 LOAD ADMIN EVENTS
 ========================= */
+function loadAdminEvents() {
+  const events = JSON.parse(localStorage.getItem("events")) || [];
+  const container = document.getElementById("eventsContainer");
 
-function loadAdminEvents(){
+  if (!container) return;
 
-const events = JSON.parse(localStorage.getItem("events")) || [];
+  container.innerHTML = "";
 
-const container = document.getElementById("eventsContainer");
+  events.forEach(event => {
+    const card = document.createElement("div");
+    card.className = "event-card";
 
-if(!container) return;
+    card.innerHTML = `
+      <h3>${event.name}</h3>
+      <p>${event.date}</p>
+      <button onclick="registerEvent('${event.name}', this)">Register</button>
+    `;
 
-container.innerHTML = "";
+    container.appendChild(card);
+  });
+}
 
-events.forEach(event => {
-
-const card = document.createElement("div");
-card.className = "event-card";
-
-card.innerHTML = `
-<h3>${event.name}</h3>
-<p>${event.date}</p>
-<button onclick="registerEvent('${event.name}', this)">Register</button>
-`;
-
-container.appendChild(card);
-
-});
-
+/* =========================
+NOTIFICATIONS
+========================= */
+function toggleNotifications() {
+  alert("Notifications toggled!");
 }
