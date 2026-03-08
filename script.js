@@ -1,6 +1,35 @@
-// =========================
-// FIREBASE CONFIGURATION
-// =========================
+/* =========================
+POLICY CHECKBOX LOGIN ENABLE
+========================= */
+window.onload = function() {
+  const policyCheck = document.getElementById("policyCheck");
+  const loginButton = document.getElementById("loginButton");
+
+  if (policyCheck && loginButton) {
+    loginButton.disabled = true;
+
+    policyCheck.addEventListener("change", function() {
+      loginButton.disabled = !this.checked;
+    });
+  }
+};
+
+/* =========================
+PAGE SWITCHING
+========================= */
+function showSignup() {
+  document.getElementById("loginPage").classList.add("hidden");
+  document.getElementById("signupPage").classList.remove("hidden");
+}
+
+function showLogin() {
+  document.getElementById("signupPage").classList.add("hidden");
+  document.getElementById("loginPage").classList.remove("hidden");
+}
+
+/* =========================
+FIREBASE CONFIGURATION
+========================= */
 const firebaseConfig = {
   apiKey: "AIzaSyAkv_DvIsebBqaV4HcIzuSqJxhfjySATYg",
   authDomain: "unisphere-25.firebaseapp.com",
@@ -10,47 +39,17 @@ const firebaseConfig = {
   appId: "1:673455787578:web:7d77141819dbe4ac85ef03",
   measurementId: "G-JHR3XK4D8Q"
 };
+
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// =========================
-// POLICY CHECKBOX LOGIN ENABLE
-// =========================
-window.onload = function() {
-  const policyCheck = document.getElementById("policyCheck");
-  const loginButton = document.getElementById("loginButton");
-  if (policyCheck && loginButton) {
-    loginButton.disabled = true;
-    policyCheck.addEventListener("change", function() {
-      loginButton.disabled = !this.checked;
-    });
-  }
-};
-
-// =========================
-// PAGE SWITCHING
-// =========================
-function showSignup() {
-  document.getElementById("loginPage").classList.add("hidden");
-  document.getElementById("signupPage").classList.remove("hidden");
-  clearMessages();
-}
-function showLogin() {
-  document.getElementById("signupPage").classList.add("hidden");
-  document.getElementById("loginPage").classList.remove("hidden");
-  clearMessages();
-}
-function clearMessages() {
-  document.getElementById("signupMessage").innerText = "";
-  document.getElementById("loginMessage").innerText = "";
-}
-
-// =========================
-// SIGNUP SYSTEM
-// =========================
+/* =========================
+SIGNUP SYSTEM
+========================= */
 function signup() {
   const email = document.getElementById("signupEmail").value.trim();
   const password = document.getElementById("signupPassword").value.trim();
+
   if (!email || !password) {
     document.getElementById("signupMessage").innerText = "Please fill all fields";
     return;
@@ -58,17 +57,20 @@ function signup() {
 
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
-      document.getElementById("signupMessage").innerText = "Account created! Please log in.";
-      showLogin(); // ✅ fixed: go to login instead of dashboard
+      // Immediately sign out to prevent dashboard flashing
+      auth.signOut().then(() => {
+        document.getElementById("signupMessage").innerText = "Account created! Please log in.";
+        showLogin();
+      });
     })
     .catch(error => {
       document.getElementById("signupMessage").innerText = error.message;
     });
 }
 
-// =========================
-// LOGIN SYSTEM
-// =========================
+/* =========================
+LOGIN SYSTEM
+========================= */
 function login() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
@@ -83,21 +85,22 @@ function login() {
     });
 }
 
-// =========================
-// SHOW DASHBOARD AFTER LOGIN
-// =========================
+/* =========================
+SHOW DASHBOARD
+========================= */
 function showDashboard(user) {
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("signupPage").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
   document.getElementById("welcomeUser").innerText = `Welcome, ${user.email}`;
+
   loadRegisteredEvents();
   loadAdminEvents();
 }
 
-// =========================
-// LOGOUT
-// =========================
+/* =========================
+LOGOUT
+========================= */
 function logout() {
   auth.signOut().then(() => {
     document.getElementById("dashboard").classList.add("hidden");
@@ -105,44 +108,39 @@ function logout() {
   });
 }
 
-// =========================
-// KEEP USER LOGGED IN
-// =========================
-auth.onAuthStateChanged(user => {
-  if (user) {
-    showDashboard(user);
-  }
-});
-
-// =========================
-// PAGE NAVIGATION
-// =========================
+/* =========================
+PAGE NAVIGATION
+========================= */
 function showPage(page) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(page).classList.add("active");
 }
 
-// =========================
-// EVENT REGISTRATION
-// =========================
+/* =========================
+EVENT REGISTRATION
+========================= */
 function registerEvent(eventName, button) {
   let registeredEvents = JSON.parse(localStorage.getItem("registeredEvents")) || [];
+
   if (!registeredEvents.includes(eventName)) {
     registeredEvents.push(eventName);
     localStorage.setItem("registeredEvents", JSON.stringify(registeredEvents));
     button.innerText = "Registered";
     button.disabled = true;
   }
+
   loadRegisteredEvents();
 }
 
-// =========================
-// LOAD USER REGISTERED EVENTS
-// =========================
+/* =========================
+LOAD USER REGISTERED EVENTS
+========================= */
 function loadRegisteredEvents() {
   const list = document.getElementById("registeredEvents");
   if (!list) return;
+
   list.innerHTML = "";
+
   const events = JSON.parse(localStorage.getItem("registeredEvents")) || [];
   events.forEach(event => {
     const li = document.createElement("li");
@@ -151,26 +149,34 @@ function loadRegisteredEvents() {
   });
 }
 
-// =========================
-// LOAD ADMIN EVENTS
-// =========================
+/* =========================
+LOAD ADMIN EVENTS
+========================= */
 function loadAdminEvents() {
   const events = JSON.parse(localStorage.getItem("events")) || [];
   const container = document.getElementById("eventsContainer");
+
   if (!container) return;
+
   container.innerHTML = "";
+
   events.forEach(event => {
     const card = document.createElement("div");
     card.className = "event-card";
-    card.innerHTML = `<h3>${event.name}</h3><p>${event.date}</p>
-      <button onclick="registerEvent('${event.name}', this)">Register</button>`;
+
+    card.innerHTML = `
+      <h3>${event.name}</h3>
+      <p>${event.date}</p>
+      <button onclick="registerEvent('${event.name}', this)">Register</button>
+    `;
+
     container.appendChild(card);
   });
 }
 
-// =========================
-// NOTIFICATIONS
-// =========================
+/* =========================
+NOTIFICATIONS
+========================= */
 function toggleNotifications() {
   alert("Notifications toggled!");
 }
