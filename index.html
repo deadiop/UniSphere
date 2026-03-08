@@ -10,226 +10,239 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-</head>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 
+</head>
 <body>
 
 <!-- LOGIN PAGE -->
-
 <div id="loginPage" class="auth-container">
-
 <h2>UniSphere Login</h2>
-
-<input type="text" id="username" placeholder="Username">
-
-<input type="password" id="password" placeholder="Password">
-
+<input type="email" id="loginEmail" placeholder="Email">
+<input type="password" id="loginPassword" placeholder="Password">
 <label class="policy">
 <input type="checkbox" id="policyCheck"> I agree to Privacy Policy
 </label>
-
 <button id="loginButton" disabled onclick="login()">Login</button>
-
 <p onclick="showSignup()">Don't have an account? Sign Up</p>
-
+<p id="loginMessage"></p>
 </div>
-
 
 <!-- SIGNUP PAGE -->
-
 <div id="signupPage" class="auth-container hidden">
-
 <h2>Create Account</h2>
-
-<input type="text" id="newUsername" placeholder="Username">
-
-<input type="email" id="newEmail" placeholder="Email">
-
-<input type="password" id="newPassword" placeholder="Password">
-
+<input type="email" id="signupEmail" placeholder="Email">
+<input type="password" id="signupPassword" placeholder="Password">
 <button onclick="signup()">Sign Up</button>
-
 <p onclick="showLogin()">Already have an account? Login</p>
-
+<p id="signupMessage"></p>
 </div>
 
-
 <!-- MAIN DASHBOARD -->
-
 <div id="dashboard" class="hidden">
-
 <header>
-
 <h2>UniSphere</h2>
-
 <button class="notify-btn" onclick="toggleNotifications()">🔔</button>
-
 </header>
 
-
 <div class="layout">
-
 <aside class="sidebar">
-
 <h3>Dashboard</h3>
-
 <ul>
-
 <li onclick="showPage('home')">🏠 Home</li>
-
 <li onclick="showPage('events')">🎫 Events</li>
-
 <li onclick="showPage('faculty')">👨‍🏫 Faculty</li>
-
 <li onclick="showPage('documents')">📄 Documents</li>
-
 <li onclick="showPage('map')">🗺 Campus Map</li>
-
 <li onclick="showPage('account')">👤 Account</li>
-
 </ul>
-
 </aside>
-
 
 <div class="content">
 
-
 <!-- HOME -->
-
 <section id="home" class="page active">
-
 <h1>Welcome to UniSphere</h1>
-
 <p>Your university digital hub.</p>
-
 <div class="card-grid">
-
 <div class="card">
 <h3>Upcoming Events</h3>
 <p>3 events this month</p>
 </div>
-
 <div class="card">
 <h3>Documents</h3>
 <p>Access study materials</p>
 </div>
-
 <div class="card">
 <h3>Campus Map</h3>
 <p>Navigate easily</p>
 </div>
-
 </div>
-
 </section>
 
-
 <!-- EVENTS -->
-
 <section id="events" class="page">
-
 <h1>Upcoming Events</h1>
-
 <div class="event-grid">
-
 <div class="event-card">
 <h3>Hackathon 2025</h3>
 <p>March 30</p>
 <button onclick="registerEvent('Hackathon 2025', this)">Register</button>
 </div>
-
 <div class="event-card">
 <h3>Cultural Fest</h3>
 <p>April 15</p>
 <button onclick="registerEvent('Cultural Fest', this)">Register</button>
 </div>
-
 <div class="event-card">
 <h3>AI Seminar</h3>
 <p>May 5</p>
 <button onclick="registerEvent('AI Seminar', this)">Register</button>
 </div>
-
 </div>
-
 </section>
-
 
 <!-- FACULTY -->
-
 <section id="faculty" class="page">
-
 <h1>Faculty</h1>
-
 <table>
-
-<tr>
-<th>Name</th>
-<th>Department</th>
-</tr>
-
-<tr>
-<td>Dr. Sharma</td>
-<td>Computer Science</td>
-</tr>
-
+<tr><th>Name</th><th>Department</th></tr>
+<tr><td>Dr. Sharma</td><td>Computer Science</td></tr>
 </table>
-
 </section>
-
 
 <!-- DOCUMENTS -->
-
 <section id="documents" class="page">
-
 <h1>Documents</h1>
-
-<button onclick="window.open('https://learning.tcsionhub.in')">
-Open TCS iON Portal
-</button>
-
+<button onclick="window.open('https://learning.tcsionhub.in')">Open TCS iON Portal</button>
 </section>
-
 
 <!-- MAP -->
-
 <section id="map" class="page">
-
 <h1>Campus Map</h1>
-
 <iframe
 src="https://maps.google.com/maps?q=MIT%20ADT%20University&t=&z=15&ie=UTF8&iwloc=&output=embed"
-width="100%"
-height="300">
-</iframe>
-
+width="100%" height="300"></iframe>
 </section>
-
 
 <!-- ACCOUNT -->
-
 <section id="account" class="page">
-
 <h1>Account</h1>
-
 <p id="welcomeUser"></p>
-
 <h3>Registered Events</h3>
-
 <ul id="registeredEvents"></ul>
-
 <button onclick="logout()">Sign Out</button>
-
 </section>
 
-
 </div>
 </div>
-
 </div>
 
-<script src="script.js"></script>
+<script>
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "unisphere-25.firebaseapp.com",
+  projectId: "unisphere-25",
+  storageBucket: "unisphere-25.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Show/hide login/signup
+function showSignup() {
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('signupPage').classList.remove('hidden');
+}
+function showLogin() {
+  document.getElementById('signupPage').classList.add('hidden');
+  document.getElementById('loginPage').classList.remove('hidden');
+}
+
+// Enable login button when policy is checked
+document.getElementById('policyCheck').addEventListener('change', function() {
+  document.getElementById('loginButton').disabled = !this.checked;
+});
+
+// Sign up
+function signup() {
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      document.getElementById('signupMessage').innerText = "Account created! Please log in.";
+      showLogin();
+    })
+    .catch(error => {
+      document.getElementById('signupMessage').innerText = error.message;
+    });
+}
+
+// Login
+function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  auth.signInWithEmailAndPassword(email, password)
+    .then(userCredential => {
+      document.getElementById('loginMessage').innerText = "";
+      showDashboard(userCredential.user);
+    })
+    .catch(error => {
+      document.getElementById('loginMessage').innerText = error.message;
+    });
+}
+
+// Show dashboard
+function showDashboard(user) {
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('signupPage').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('welcomeUser').innerText = `Welcome, ${user.email}`;
+}
+
+// Logout
+function logout() {
+  auth.signOut().then(() => {
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+  });
+}
+
+// Keep user logged in
+auth.onAuthStateChanged(user => {
+  if (user) {
+    showDashboard(user);
+  }
+});
+
+// Page navigation
+function showPage(pageId) {
+  const pages = document.querySelectorAll('.page');
+  pages.forEach(page => page.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+}
+
+// Example notification toggle
+function toggleNotifications() {
+  alert("Notifications toggled!");
+}
+
+// Event registration (simple frontend example)
+function registerEvent(name, btn) {
+  const ul = document.getElementById('registeredEvents');
+  const li = document.createElement('li');
+  li.textContent = name;
+  ul.appendChild(li);
+  btn.disabled = true;
+  btn.textContent = "Registered";
+}
+</script>
 
 </body>
 </html>
