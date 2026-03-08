@@ -20,11 +20,17 @@ PAGE SWITCHING
 function showSignup() {
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("signupPage").classList.remove("hidden");
+  document.getElementById("dashboard").classList.add("hidden"); // hide dashboard
+  document.getElementById("signupMessage").innerText = "";
+  document.getElementById("loginMessage").innerText = "";
 }
 
 function showLogin() {
   document.getElementById("signupPage").classList.add("hidden");
   document.getElementById("loginPage").classList.remove("hidden");
+  document.getElementById("dashboard").classList.add("hidden"); // hide dashboard
+  document.getElementById("signupMessage").innerText = "";
+  document.getElementById("loginMessage").innerText = "";
 }
 
 /* =========================
@@ -34,7 +40,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAkv_DvIsebBqaV4HcIzuSqJxhfjySATYg",
   authDomain: "unisphere-25.firebaseapp.com",
   projectId: "unisphere-25",
-  storageBucket: "unisphere-25.firebasestorage.app",
+  storageBucket: "unisphere-25.appspot.com",
   messagingSenderId: "673455787578",
   appId: "1:673455787578:web:7d77141819dbe4ac85ef03",
   measurementId: "G-JHR3XK4D8Q"
@@ -57,9 +63,12 @@ function signup() {
   }
 
   auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      document.getElementById("signupMessage").innerText = "Account created! Please log in.";
-      showLogin();
+    .then((userCredential) => {
+      // Immediately sign out to prevent auto-login
+      auth.signOut().then(() => {
+        document.getElementById("signupMessage").innerText = "Account created! Please log in.";
+        showLogin();
+      });
     })
     .catch(error => {
       document.getElementById("signupMessage").innerText = error.message;
@@ -101,8 +110,7 @@ LOGOUT
 ========================= */
 function logout() {
   auth.signOut().then(() => {
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("loginPage").classList.remove("hidden");
+    showLogin();
   });
 }
 
@@ -112,6 +120,8 @@ KEEP USER LOGGED IN
 auth.onAuthStateChanged(user => {
   if (user) {
     showDashboard(user);
+  } else {
+    showLogin(); // ensure login page is shown if not logged in
   }
 });
 
