@@ -1,13 +1,14 @@
 /* =========================
 POLICY CHECKBOX LOGIN ENABLE
 ========================= */
-window.onload = function() {
+window.onload = function () {
   const policyCheck = document.getElementById("policyCheck");
   const loginButton = document.getElementById("loginButton");
 
   if (policyCheck && loginButton) {
     loginButton.disabled = true;
-    policyCheck.addEventListener("change", function() {
+
+    policyCheck.addEventListener("change", function () {
       loginButton.disabled = !this.checked;
     });
   }
@@ -30,18 +31,18 @@ function showLogin() {
 FIREBASE CONFIGURATION
 ========================= */
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_REAL_API_KEY_HERE",
+  apiKey: "AIzaSyAkv_DvIsebBqaV4HcIzuSqJxhfjySATYg",
   authDomain: "unisphere-25.firebaseapp.com",
   projectId: "unisphere-25",
   storageBucket: "unisphere-25.appspot.com",
-  messagingSenderId: "PASTE_YOUR_SENDER_ID_HERE",
-  appId: "PASTE_YOUR_APP_ID_HERE",
+  messagingSenderId: "673455787578",
+  appId: "1:673455787578:web:7d77141819dbe4ac85ef03",
   measurementId: "G-JHR3XK4D8Q"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); // Keep user logged in
 
 /* =========================
 SIGNUP SYSTEM
@@ -55,13 +56,16 @@ function signup() {
     return;
   }
 
-  auth.createUserWithEmailAndPassword(email, password)
+  auth
+    .createUserWithEmailAndPassword(email, password)
     .then(() => {
       document.getElementById("signupMessage").innerText = "Account created! Please log in.";
       showLogin();
-      // Do NOT auto-login
+      // Clear signup fields to prevent immediate auto-login
+      document.getElementById("signupEmail").value = "";
+      document.getElementById("signupPassword").value = "";
     })
-    .catch(error => {
+    .catch((error) => {
       document.getElementById("signupMessage").innerText = error.message;
     });
 }
@@ -73,12 +77,21 @@ function login() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
 
-  auth.signInWithEmailAndPassword(email, password)
-    .then(userCredential => {
+  if (!email || !password) {
+    document.getElementById("loginMessage").innerText = "Please fill all fields";
+    return;
+  }
+
+  auth
+    .signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
       document.getElementById("loginMessage").innerText = "";
       showDashboard(userCredential.user);
+      // Clear login fields
+      document.getElementById("loginEmail").value = "";
+      document.getElementById("loginPassword").value = "";
     })
-    .catch(error => {
+    .catch((error) => {
       document.getElementById("loginMessage").innerText = error.message;
     });
 }
@@ -109,13 +122,10 @@ function logout() {
 /* =========================
 KEEP USER LOGGED IN
 ========================= */
-auth.onAuthStateChanged(user => {
-  if (user) {
+auth.onAuthStateChanged((user) => {
+  // Only show dashboard if user previously logged in
+  if (user && !document.getElementById("signupPage").classList.contains("hidden")) {
     showDashboard(user);
-  } else {
-    // Show login page if no user
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("loginPage").classList.remove("hidden");
   }
 });
 
@@ -123,7 +133,7 @@ auth.onAuthStateChanged(user => {
 PAGE NAVIGATION
 ========================= */
 function showPage(page) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
   document.getElementById(page).classList.add("active");
 }
 
@@ -132,12 +142,14 @@ EVENT REGISTRATION
 ========================= */
 function registerEvent(eventName, button) {
   let registeredEvents = JSON.parse(localStorage.getItem("registeredEvents")) || [];
+
   if (!registeredEvents.includes(eventName)) {
     registeredEvents.push(eventName);
     localStorage.setItem("registeredEvents", JSON.stringify(registeredEvents));
     button.innerText = "Registered";
     button.disabled = true;
   }
+
   loadRegisteredEvents();
 }
 
@@ -149,8 +161,9 @@ function loadRegisteredEvents() {
   if (!list) return;
 
   list.innerHTML = "";
+
   const events = JSON.parse(localStorage.getItem("registeredEvents")) || [];
-  events.forEach(event => {
+  events.forEach((event) => {
     const li = document.createElement("li");
     li.innerText = event;
     list.appendChild(li);
@@ -163,17 +176,21 @@ LOAD ADMIN EVENTS
 function loadAdminEvents() {
   const events = JSON.parse(localStorage.getItem("events")) || [];
   const container = document.getElementById("eventsContainer");
+
   if (!container) return;
 
   container.innerHTML = "";
-  events.forEach(event => {
+
+  events.forEach((event) => {
     const card = document.createElement("div");
     card.className = "event-card";
+
     card.innerHTML = `
       <h3>${event.name}</h3>
       <p>${event.date}</p>
       <button onclick="registerEvent('${event.name}', this)">Register</button>
     `;
+
     container.appendChild(card);
   });
 }
