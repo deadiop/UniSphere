@@ -28,7 +28,7 @@ function showSignup() {
 function showLogin() {
   document.getElementById("signupPage").classList.add("hidden");
   document.getElementById("loginPage").classList.remove("hidden");
-  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("dashboard").classList.add("hidden"); // hide dashboard
   document.getElementById("signupMessage").innerText = "";
   document.getElementById("loginMessage").innerText = "";
 }
@@ -62,23 +62,30 @@ function signup() {
     return;
   }
 
-  // Temporarily unsubscribe from onAuthStateChanged to prevent auto-login
-  const unsubscribe = auth.onAuthStateChanged(() => {});
+  // Flag to prevent onAuthStateChanged auto-login after signup
+  let isSignupProcess = true;
+
+  // Temporary listener to prevent auto-login
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    if (user && isSignupProcess) {
+      auth.signOut(); // immediately sign out
+    }
+  });
 
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
-      // Sign out immediately after creation
-      auth.signOut().then(() => {
-        document.getElementById("signupMessage").innerText = "Account created! Please log in.";
-        showLogin();
-        unsubscribe(); // re-enable the onAuthStateChanged listener
-      });
+      // After account creation, show login page manually
+      isSignupProcess = false;
+      showLogin();
+      document.getElementById("signupMessage").innerText = "Account created! Please log in.";
+      unsubscribe(); // remove temporary listener
     })
     .catch(error => {
       document.getElementById("signupMessage").innerText = error.message;
       unsubscribe();
     });
 }
+
 /* =========================
 LOGIN SYSTEM
 ========================= */
@@ -125,7 +132,7 @@ auth.onAuthStateChanged(user => {
   if (user) {
     showDashboard(user);
   } else {
-    showLogin(); // ensure login page is shown if not logged in
+    showLogin();
   }
 });
 
