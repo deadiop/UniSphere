@@ -7,7 +7,6 @@ window.onload = function() {
 
   if (policyCheck && loginButton) {
     loginButton.disabled = true;
-
     policyCheck.addEventListener("change", function() {
       loginButton.disabled = !this.checked;
     });
@@ -20,7 +19,7 @@ PAGE SWITCHING
 function showSignup() {
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("signupPage").classList.remove("hidden");
-  document.getElementById("dashboard").classList.add("hidden"); // hide dashboard
+  document.getElementById("dashboard").classList.add("hidden");
   document.getElementById("signupMessage").innerText = "";
   document.getElementById("loginMessage").innerText = "";
 }
@@ -28,7 +27,7 @@ function showSignup() {
 function showLogin() {
   document.getElementById("signupPage").classList.add("hidden");
   document.getElementById("loginPage").classList.remove("hidden");
-  document.getElementById("dashboard").classList.add("hidden"); // hide dashboard
+  document.getElementById("dashboard").classList.add("hidden");
   document.getElementById("signupMessage").innerText = "";
   document.getElementById("loginMessage").innerText = "";
 }
@@ -46,12 +45,11 @@ const firebaseConfig = {
   measurementId: "G-JHR3XK4D8Q"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 /* =========================
-SIGNUP SYSTEM
+SIGNUP SYSTEM (no auto-login)
 ========================= */
 function signup() {
   const email = document.getElementById("signupEmail").value.trim();
@@ -62,27 +60,14 @@ function signup() {
     return;
   }
 
-  // Flag to prevent onAuthStateChanged auto-login after signup
-  let isSignupProcess = true;
-
-  // Temporary listener to prevent auto-login
-  const unsubscribe = auth.onAuthStateChanged((user) => {
-    if (user && isSignupProcess) {
-      auth.signOut(); // immediately sign out
-    }
-  });
-
-  auth.createUserWithEmailAndPassword(email, password)
+  auth.setPersistence(firebase.auth.Auth.Persistence.NONE)
+    .then(() => auth.createUserWithEmailAndPassword(email, password))
     .then(() => {
-      // After account creation, show login page manually
-      isSignupProcess = false;
-      showLogin();
       document.getElementById("signupMessage").innerText = "Account created! Please log in.";
-      unsubscribe(); // remove temporary listener
+      showLogin();
     })
     .catch(error => {
       document.getElementById("signupMessage").innerText = error.message;
-      unsubscribe();
     });
 }
 
@@ -93,7 +78,8 @@ function login() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
 
-  auth.signInWithEmailAndPassword(email, password)
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(() => auth.signInWithEmailAndPassword(email, password))
     .then(userCredential => {
       document.getElementById("loginMessage").innerText = "";
       showDashboard(userCredential.user);
@@ -104,7 +90,7 @@ function login() {
 }
 
 /* =========================
-SHOW DASHBOARD AFTER LOGIN
+SHOW DASHBOARD
 ========================= */
 function showDashboard(user) {
   document.getElementById("loginPage").classList.add("hidden");
@@ -126,7 +112,7 @@ function logout() {
 }
 
 /* =========================
-KEEP USER LOGGED IN
+ON AUTH STATE CHANGED
 ========================= */
 auth.onAuthStateChanged(user => {
   if (user) {
@@ -149,14 +135,12 @@ EVENT REGISTRATION
 ========================= */
 function registerEvent(eventName, button) {
   let registeredEvents = JSON.parse(localStorage.getItem("registeredEvents")) || [];
-
   if (!registeredEvents.includes(eventName)) {
     registeredEvents.push(eventName);
     localStorage.setItem("registeredEvents", JSON.stringify(registeredEvents));
     button.innerText = "Registered";
     button.disabled = true;
   }
-
   loadRegisteredEvents();
 }
 
@@ -166,9 +150,7 @@ LOAD USER REGISTERED EVENTS
 function loadRegisteredEvents() {
   const list = document.getElementById("registeredEvents");
   if (!list) return;
-
   list.innerHTML = "";
-
   const events = JSON.parse(localStorage.getItem("registeredEvents")) || [];
   events.forEach(event => {
     const li = document.createElement("li");
@@ -183,21 +165,16 @@ LOAD ADMIN EVENTS
 function loadAdminEvents() {
   const events = JSON.parse(localStorage.getItem("events")) || [];
   const container = document.getElementById("eventsContainer");
-
   if (!container) return;
-
   container.innerHTML = "";
-
   events.forEach(event => {
     const card = document.createElement("div");
     card.className = "event-card";
-
     card.innerHTML = `
       <h3>${event.name}</h3>
       <p>${event.date}</p>
       <button onclick="registerEvent('${event.name}', this)">Register</button>
     `;
-
     container.appendChild(card);
   });
 }
