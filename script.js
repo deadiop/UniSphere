@@ -34,7 +34,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAkv_DvIsebBqaV4HcIzuSqJxhfjySATYg",
   authDomain: "unisphere-25.firebaseapp.com",
   projectId: "unisphere-25",
-  storageBucket: "unisphere-25.firebasestorage.app",
+  storageBucket: "unisphere-25.appspot.com",  // ✅ fixed
   messagingSenderId: "673455787578",
   appId: "1:673455787578:web:7d77141819dbe4ac85ef03",
   measurementId: "G-JHR3XK4D8Q"
