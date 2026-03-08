@@ -28,7 +28,7 @@ function showSignup() {
 function showLogin() {
   document.getElementById("signupPage").classList.add("hidden");
   document.getElementById("loginPage").classList.remove("hidden");
-  document.getElementById("dashboard").classList.add("hidden"); // hide dashboard
+  document.getElementById("dashboard").classList.add("hidden");
   document.getElementById("signupMessage").innerText = "";
   document.getElementById("loginMessage").innerText = "";
 }
@@ -62,19 +62,23 @@ function signup() {
     return;
   }
 
+  // Temporarily unsubscribe from onAuthStateChanged to prevent auto-login
+  const unsubscribe = auth.onAuthStateChanged(() => {});
+
   auth.createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Immediately sign out to prevent auto-login
+    .then(() => {
+      // Sign out immediately after creation
       auth.signOut().then(() => {
         document.getElementById("signupMessage").innerText = "Account created! Please log in.";
         showLogin();
+        unsubscribe(); // re-enable the onAuthStateChanged listener
       });
     })
     .catch(error => {
       document.getElementById("signupMessage").innerText = error.message;
+      unsubscribe();
     });
 }
-
 /* =========================
 LOGIN SYSTEM
 ========================= */
