@@ -19,37 +19,32 @@ PAGE SWITCHING
 function showSignup() {
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("signupPage").classList.remove("hidden");
-  document.getElementById("dashboard").classList.add("hidden");
-  document.getElementById("signupMessage").innerText = "";
-  document.getElementById("loginMessage").innerText = "";
 }
 
 function showLogin() {
   document.getElementById("signupPage").classList.add("hidden");
   document.getElementById("loginPage").classList.remove("hidden");
-  document.getElementById("dashboard").classList.add("hidden");
-  document.getElementById("signupMessage").innerText = "";
-  document.getElementById("loginMessage").innerText = "";
 }
 
 /* =========================
 FIREBASE CONFIGURATION
 ========================= */
 const firebaseConfig = {
-  apiKey: "AIzaSyAkv_DvIsebBqaV4HcIzuSqJxhfjySATYg",
+  apiKey: "PASTE_YOUR_REAL_API_KEY_HERE",
   authDomain: "unisphere-25.firebaseapp.com",
   projectId: "unisphere-25",
   storageBucket: "unisphere-25.appspot.com",
-  messagingSenderId: "673455787578",
-  appId: "1:673455787578:web:7d77141819dbe4ac85ef03",
+  messagingSenderId: "PASTE_YOUR_SENDER_ID_HERE",
+  appId: "PASTE_YOUR_APP_ID_HERE",
   measurementId: "G-JHR3XK4D8Q"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); // Keep user logged in
 
 /* =========================
-SIGNUP SYSTEM (no auto-login)
+SIGNUP SYSTEM
 ========================= */
 function signup() {
   const email = document.getElementById("signupEmail").value.trim();
@@ -60,11 +55,11 @@ function signup() {
     return;
   }
 
-  auth.setPersistence(firebase.auth.Auth.Persistence.NONE)
-    .then(() => auth.createUserWithEmailAndPassword(email, password))
+  auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
       document.getElementById("signupMessage").innerText = "Account created! Please log in.";
       showLogin();
+      // Do NOT auto-login
     })
     .catch(error => {
       document.getElementById("signupMessage").innerText = error.message;
@@ -78,8 +73,7 @@ function login() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
 
-  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-    .then(() => auth.signInWithEmailAndPassword(email, password))
+  auth.signInWithEmailAndPassword(email, password)
     .then(userCredential => {
       document.getElementById("loginMessage").innerText = "";
       showDashboard(userCredential.user);
@@ -90,7 +84,7 @@ function login() {
 }
 
 /* =========================
-SHOW DASHBOARD
+SHOW DASHBOARD AFTER LOGIN
 ========================= */
 function showDashboard(user) {
   document.getElementById("loginPage").classList.add("hidden");
@@ -107,18 +101,21 @@ LOGOUT
 ========================= */
 function logout() {
   auth.signOut().then(() => {
-    showLogin();
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginPage").classList.remove("hidden");
   });
 }
 
 /* =========================
-ON AUTH STATE CHANGED
+KEEP USER LOGGED IN
 ========================= */
 auth.onAuthStateChanged(user => {
   if (user) {
     showDashboard(user);
   } else {
-    showLogin();
+    // Show login page if no user
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginPage").classList.remove("hidden");
   }
 });
 
@@ -150,6 +147,7 @@ LOAD USER REGISTERED EVENTS
 function loadRegisteredEvents() {
   const list = document.getElementById("registeredEvents");
   if (!list) return;
+
   list.innerHTML = "";
   const events = JSON.parse(localStorage.getItem("registeredEvents")) || [];
   events.forEach(event => {
@@ -166,6 +164,7 @@ function loadAdminEvents() {
   const events = JSON.parse(localStorage.getItem("events")) || [];
   const container = document.getElementById("eventsContainer");
   if (!container) return;
+
   container.innerHTML = "";
   events.forEach(event => {
     const card = document.createElement("div");
