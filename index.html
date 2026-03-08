@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="css/styles.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Firebase SDK -->
+<!-- Firebase SDKs (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 
@@ -17,132 +17,121 @@
 
 <!-- LOGIN PAGE -->
 <div id="loginPage" class="auth-container">
-  <h2>UniSphere Login</h2>
-  <input type="email" id="loginEmail" placeholder="Email">
-  <input type="password" id="loginPassword" placeholder="Password">
-  <label class="policy">
-    <input type="checkbox" id="policyCheck"> I agree to Privacy Policy
-  </label>
-  <button id="loginButton" disabled onclick="login()">Login</button>
-  <p onclick="showSignup()">Don't have an account? Sign Up</p>
-  <p id="loginMessage"></p>
+<h2>UniSphere Login</h2>
+<input type="email" id="loginEmail" placeholder="Email">
+<input type="password" id="loginPassword" placeholder="Password">
+<label class="policy">
+<input type="checkbox" id="policyCheck"> I agree to Privacy Policy
+</label>
+<button id="loginButton" disabled onclick="login()">Login</button>
+<p onclick="showSignup()">Don't have an account? Sign Up</p>
+<p id="loginMessage"></p>
 </div>
 
 <!-- SIGNUP PAGE -->
 <div id="signupPage" class="auth-container hidden">
-  <h2>Create Account</h2>
-  <input type="email" id="signupEmail" placeholder="Email">
-  <input type="password" id="signupPassword" placeholder="Password">
-  <button onclick="signup()">Sign Up</button>
-  <p onclick="showLogin()">Already have an account? Login</p>
-  <p id="signupMessage"></p>
+<h2>Create Account</h2>
+<input type="email" id="signupEmail" placeholder="Email">
+<input type="password" id="signupPassword" placeholder="Password">
+<button onclick="signup()">Sign Up</button>
+<p onclick="showLogin()">Already have an account? Login</p>
+<p id="signupMessage"></p>
 </div>
 
 <!-- MAIN DASHBOARD -->
 <div id="dashboard" class="hidden">
-  <header>
-    <h2>UniSphere</h2>
-    <button class="notify-btn" onclick="toggleNotifications()">🔔</button>
-  </header>
+<header>
+<h2>UniSphere</h2>
+<button class="notify-btn" onclick="toggleNotifications()">🔔</button>
+</header>
 
-  <div class="layout">
-    <aside class="sidebar">
-      <h3>Dashboard</h3>
-      <ul>
-        <li onclick="showPage('home')">🏠 Home</li>
-        <li onclick="showPage('events')">🎫 Events</li>
-        <li onclick="showPage('faculty')">👨‍🏫 Faculty</li>
-        <li onclick="showPage('documents')">📄 Documents</li>
-        <li onclick="showPage('map')">🗺 Campus Map</li>
-        <li onclick="showPage('account')">👤 Account</li>
-      </ul>
-    </aside>
+<div class="layout">
+<aside class="sidebar">
+<h3>Dashboard</h3>
+<ul>
+<li onclick="showPage('home')">🏠 Home</li>
+<li onclick="showPage('events')">🎫 Events</li>
+<li onclick="showPage('faculty')">👨‍🏫 Faculty</li>
+<li onclick="showPage('documents')">📄 Documents</li>
+<li onclick="showPage('map')">🗺 Campus Map</li>
+<li onclick="showPage('account')">👤 Account</li>
+</ul>
+</aside>
 
-    <div class="content">
+<div class="content">
 
-      <!-- HOME -->
-      <section id="home" class="page active">
-        <h1>Welcome to UniSphere</h1>
-        <p>Your university digital hub.</p>
-        <div class="card-grid">
-          <div class="card">
-            <h3>Upcoming Events</h3>
-            <p>3 events this month</p>
-          </div>
-          <div class="card">
-            <h3>Documents</h3>
-            <p>Access study materials</p>
-          </div>
-          <div class="card">
-            <h3>Campus Map</h3>
-            <p>Navigate easily</p>
-          </div>
-        </div>
-      </section>
+<!-- HOME -->
+<section id="home" class="page active">
+<h1>Welcome to UniSphere</h1>
+<p>Your university digital hub.</p>
+<div class="card-grid">
+<div class="card">
+<h3>Upcoming Events</h3>
+<p>3 events this month</p>
+</div>
+<div class="card">
+<h3>Documents</h3>
+<p>Access study materials</p>
+</div>
+<div class="card">
+<h3>Campus Map</h3>
+<p>Navigate easily</p>
+</div>
+</div>
+</section>
 
-      <!-- EVENTS -->
-      <section id="events" class="page">
-        <h1>Upcoming Events</h1>
-        <div class="event-grid" id="eventsContainer"></div>
-      </section>
+<!-- EVENTS -->
+<section id="events" class="page">
+<h1>Upcoming Events</h1>
+<div class="event-grid" id="eventsContainer">
+<!-- Admin events will load here dynamically -->
+</div>
+</section>
 
-      <!-- FACULTY -->
-      <section id="faculty" class="page">
-        <h1>Faculty</h1>
-        <table>
-          <tr><th>Name</th><th>Department</th></tr>
-          <tr><td>Dr. Sharma</td><td>Computer Science</td></tr>
-        </table>
-      </section>
+<!-- FACULTY -->
+<section id="faculty" class="page">
+<h1>Faculty</h1>
+<table>
+<tr><th>Name</th><th>Department</th></tr>
+<tr><td>Dr. Sharma</td><td>Computer Science</td></tr>
+</table>
+</section>
 
-      <!-- DOCUMENTS -->
-      <section id="documents" class="page">
-        <h1>Documents</h1>
-        <button onclick="window.open('https://learning.tcsionhub.in')">Open TCS iON Portal</button>
-      </section>
+<!-- DOCUMENTS -->
+<section id="documents" class="page">
+<h1>Documents</h1>
+<button onclick="window.open('https://learning.tcsionhub.in')">Open TCS iON Portal</button>
+</section>
 
-      <!-- MAP -->
-      <section id="map" class="page">
-        <h1>Campus Map</h1>
-        <iframe
-          src="https://maps.google.com/maps?q=MIT%20ADT%20University&t=&z=15&ie=UTF8&iwloc=&output=embed"
-          width="100%" height="300"></iframe>
-      </section>
+<!-- MAP -->
+<section id="map" class="page">
+<h1>Campus Map</h1>
+<iframe
+src="https://maps.google.com/maps?q=MIT%20ADT%20University&t=&z=15&ie=UTF8&iwloc=&output=embed"
+width="100%" height="300"></iframe>
+</section>
 
-      <!-- ACCOUNT -->
-      <section id="account" class="page">
-        <h1>Account</h1>
-        <p id="welcomeUser"></p>
-        <h3>Registered Events</h3>
-        <ul id="registeredEvents"></ul>
-        <button onclick="logout()">Sign Out</button>
-      </section>
+<!-- ACCOUNT -->
+<section id="account" class="page">
+<h1>Account</h1>
+<p id="welcomeUser"></p>
+<h3>Registered Events</h3>
+<ul id="registeredEvents"></ul>
+<button onclick="logout()">Sign Out</button>
+</section>
 
-    </div>
-  </div>
+</div>
+</div>
 </div>
 
 <script>
-/* =========================
-FIREBASE CONFIGURATION
-========================= */
-const firebaseConfig = {
-  apiKey: "PASTE_YOUR_REAL_API_KEY_HERE",
-  authDomain: "unisphere-25.firebaseapp.com",
-  projectId: "unisphere-25",
-  storageBucket: "unisphere-25.appspot.com",
-  messagingSenderId: "PASTE_YOUR_REAL_SENDER_ID_HERE",
-  appId: "PASTE_YOUR_REAL_APP_ID_HERE",
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
-/* =========================
-POLICY CHECKBOX
-========================= */
-window.onload = () => {
+// =========================
+// POLICY CHECKBOX LOGIN ENABLE
+// =========================
+window.onload = function() {
   const policyCheck = document.getElementById("policyCheck");
   const loginButton = document.getElementById("loginButton");
+
   if (policyCheck && loginButton) {
     loginButton.disabled = true;
     policyCheck.addEventListener("change", function() {
@@ -151,26 +140,44 @@ window.onload = () => {
   }
 };
 
-/* =========================
-SHOW/HIDE PAGES
-========================= */
+// =========================
+// PAGE SWITCHING
+// =========================
 function showSignup() {
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("signupPage").classList.remove("hidden");
-  document.getElementById("loginMessage").innerText = "";
-  document.getElementById("signupMessage").innerText = "";
+  clearMessages();
 }
-
 function showLogin() {
   document.getElementById("signupPage").classList.add("hidden");
   document.getElementById("loginPage").classList.remove("hidden");
-  document.getElementById("loginMessage").innerText = "";
+  clearMessages();
+}
+function clearMessages() {
   document.getElementById("signupMessage").innerText = "";
+  document.getElementById("loginMessage").innerText = "";
 }
 
-/* =========================
-SIGNUP SYSTEM
-========================= */
+// =========================
+// FIREBASE CONFIGURATION
+// =========================
+const firebaseConfig = {
+  apiKey: "AIzaSyAkv_DvIsebBqaV4HcIzuSqJxhfjySATYg",
+  authDomain: "unisphere-25.firebaseapp.com",
+  projectId: "unisphere-25",
+  storageBucket: "unisphere-25.appspot.com", // ✅ fixed
+  messagingSenderId: "673455787578",
+  appId: "1:673455787578:web:7d77141819dbe4ac85ef03",
+  measurementId: "G-JHR3XK4D8Q"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// =========================
+// SIGNUP SYSTEM
+// =========================
 function signup() {
   const email = document.getElementById("signupEmail").value.trim();
   const password = document.getElementById("signupPassword").value.trim();
@@ -183,6 +190,7 @@ function signup() {
   auth.createUserWithEmailAndPassword(email, password)
     .then(() => {
       document.getElementById("signupMessage").innerText = "Account created! Please log in.";
+      // Do NOT automatically show dashboard
       showLogin();
     })
     .catch(error => {
@@ -190,9 +198,9 @@ function signup() {
     });
 }
 
-/* =========================
-LOGIN SYSTEM
-========================= */
+// =========================
+// LOGIN SYSTEM
+// =========================
 function login() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
@@ -207,9 +215,9 @@ function login() {
     });
 }
 
-/* =========================
-SHOW DASHBOARD
-========================= */
+// =========================
+// SHOW DASHBOARD AFTER LOGIN
+// =========================
 function showDashboard(user) {
   document.getElementById("loginPage").classList.add("hidden");
   document.getElementById("signupPage").classList.add("hidden");
@@ -220,9 +228,9 @@ function showDashboard(user) {
   loadAdminEvents();
 }
 
-/* =========================
-LOGOUT
-========================= */
+// =========================
+// LOGOUT
+// =========================
 function logout() {
   auth.signOut().then(() => {
     document.getElementById("dashboard").classList.add("hidden");
@@ -230,27 +238,27 @@ function logout() {
   });
 }
 
-/* =========================
-KEEP USER LOGGED IN
-========================= */
+// =========================
+// KEEP USER LOGGED IN
+// =========================
 auth.onAuthStateChanged(user => {
-  if (user) {
-    // Only show dashboard if the user already logged in previously
+  // Only auto-login if the user has already logged in previously
+  if (user && !document.getElementById("signupPage").classList.contains("hidden")) {
     showDashboard(user);
   }
 });
 
-/* =========================
-PAGE NAVIGATION
-========================= */
+// =========================
+// PAGE NAVIGATION
+// =========================
 function showPage(page) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(page).classList.add("active");
 }
 
-/* =========================
-EVENT REGISTRATION
-========================= */
+// =========================
+// EVENT REGISTRATION
+// =========================
 function registerEvent(eventName, button) {
   let registeredEvents = JSON.parse(localStorage.getItem("registeredEvents")) || [];
   if (!registeredEvents.includes(eventName)) {
@@ -262,13 +270,12 @@ function registerEvent(eventName, button) {
   loadRegisteredEvents();
 }
 
-/* =========================
-LOAD USER EVENTS
-========================= */
+// =========================
+// LOAD USER REGISTERED EVENTS
+// =========================
 function loadRegisteredEvents() {
   const list = document.getElementById("registeredEvents");
   if (!list) return;
-
   list.innerHTML = "";
   const events = JSON.parse(localStorage.getItem("registeredEvents")) || [];
   events.forEach(event => {
@@ -278,27 +285,29 @@ function loadRegisteredEvents() {
   });
 }
 
-/* =========================
-LOAD ADMIN EVENTS
-========================= */
+// =========================
+// LOAD ADMIN EVENTS
+// =========================
 function loadAdminEvents() {
   const events = JSON.parse(localStorage.getItem("events")) || [];
   const container = document.getElementById("eventsContainer");
   if (!container) return;
-
   container.innerHTML = "";
   events.forEach(event => {
     const card = document.createElement("div");
     card.className = "event-card";
-    card.innerHTML = `<h3>${event.name}</h3><p>${event.date}</p>
-      <button onclick="registerEvent('${event.name}', this)">Register</button>`;
+    card.innerHTML = `
+      <h3>${event.name}</h3>
+      <p>${event.date}</p>
+      <button onclick="registerEvent('${event.name}', this)">Register</button>
+    `;
     container.appendChild(card);
   });
 }
 
-/* =========================
-NOTIFICATIONS
-========================= */
+// =========================
+// NOTIFICATIONS
+// =========================
 function toggleNotifications() {
   alert("Notifications toggled!");
 }
